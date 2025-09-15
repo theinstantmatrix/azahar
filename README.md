@@ -1,3 +1,8 @@
+Azahar (with unofficial binaries for Windows ARM64/AArch64, fork of [azahar-emu/azahar](https://github.com/azahar-emu/azahar)).  
+Downloads are hosted at the [releases](https://github.com/theinstantmatrix/azahar/releases) section.
+
+---
+
 ![Azahar Emulator](https://azahar-emu.org/resources/images/logo/azahar-name-and-logo.svg)
 
 ![GitHub Release](https://img.shields.io/github/v/release/azahar-emu/azahar?label=Current%20Release)
@@ -14,7 +19,7 @@ The goal of this project is to be the de-facto platform for future development.
 
 ### Windows
 
-Download the latest release from [Releases](https://github.com/azahar-emu/azahar/releases).
+Download the latest release from [Releases](https://github.com/theinstantmatrix/azahar/releases).
 
 If you are unsure of whether you want to use MSYS2 or MSVC, use MSYS2.
 
@@ -22,7 +27,7 @@ If you are unsure of whether you want to use MSYS2 or MSVC, use MSYS2.
 
 ### MacOS
 
-To download a build that will work on all Macs, you can download the `macos-universal` build on the [Releases](https://github.com/azahar-emu/azahar/releases) page.
+To download a build that will work on all Macs, you can download the `macos-universal` build on the [Releases](https://github.com/theinstantmatrix/azahar/releases) page.
 
 Alternatively, if you wish to download a build specifically for your Mac, you can choose either:
 
@@ -42,7 +47,7 @@ Alternatively, you can install the app using Obtainium:
 4. Click 'Add'
 5. Click 'Install'
 
-If you wish, you can also simply install the latest APK from the [Releases](https://github.com/azahar-emu/azahar/releases) page.
+If you wish, you can also simply install the latest APK from the [Releases](https://github.com/theinstantmatrix/azahar/releases) page.
 
 Keep in mind that you will not recieve automatic updates when installing via the APK.
 
@@ -53,7 +58,7 @@ The recommended format for using Azahar on Linux is the Flatpak available on Fla
 
 <a href='https://flathub.org/apps/org.azahar_emu.Azahar'><img width='180' alt='Download on Flathub' src='https://dl.flathub.org/assets/badges/flathub-badge-en.png'/></a>
 
-Azahar is also available as an AppImage on the [Releases](https://github.com/azahar-emu/azahar/releases) page.
+Azahar is also available as an AppImage on the [Releases](https://github.com/theinstantmatrix/azahar/releases) page.
 
 
 # Build instructions
