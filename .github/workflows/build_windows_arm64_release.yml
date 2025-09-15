@@ -1,0 +1,68 @@
+name: Build Azahar (Release, Windows ARM64/AArch64)
+
+on: workflow_dispatch
+
+jobs:
+  build-winarm64:
+    defaults:
+      run:
+        shell: msys2 {0}
+    runs-on: windows-11-arm
+    steps:
+      - name: 'Configure git: core.autocrlf, core.eol'
+        shell: bash
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - uses: robinraju/release-downloader@v1
+        with:
+          repository: azahar-emu/azahar
+          latest: true
+          fileName: 'azahar-unified-source-*.tar.xz'
+          tarBall: false
+          zipBall: false
+          out-file-path: release
+      - name: Extract release and rename
+        shell: bash
+        run: |
+          cd release
+          tar -xvJf azahar-unified-source-*.tar.xz || true
+          rm azahar-unified-source-*.tar.xz
+          for a in azahar-unified-source-*; do mv "$a" azahar; done
+      - name: Patch files
+        shell: bash
+        run: |
+          cd release/azahar
+          
+          # Patch out GitHub Actions detection to force display release version
+          echo "LS0tIGEudHh0CTIwMjYtMDMtMjYgMTY6MDg6MDkuNTgxMDg3MDAwIC0wNDAwCisrKyBiLnR4dAkyMDI2LTAzLTI2IDE2OjEzOjAxLjU3ODExMTgwMCAtMDQwMApAQCAtMzYsMTEgKzM2LDcgQEAKICAgICBzZXQoUkVQT19OQU1FICIiKQogICAgIHNldChCVUlMRF9WRVJTSU9OICIwIikKICAgICBzZXQoQlVJTERfRlVMTE5BTUUgIiR7R0lUX1NIT1JUX1JFVn0iKQotICAgIGlmIChERUZJTkVEIEVOVntDSX0gQU5EIERFRklORUQgRU5We0dJVEhVQl9BQ1RJT05TfSkKLSAgICAgICAgaWYgKCRFTlZ7R0lUSFVCX1JFRl9UWVBFfSBTVFJFUVVBTCAidGFnIikKLSAgICAgICAgICAgIHNldChHSVRfVEFHICRFTlZ7R0lUSFVCX1JFRl9OQU1FfSkKLSAgICAgICAgZW5kaWYoKQotICAgIGVsc2VpZiAoRVhJU1RTICIke0NNQUtFX1NPVVJDRV9ESVJ9L0dJVC1DT01NSVQiIEFORCBFWElTVFMgIiR7Q01BS0VfU09VUkNFX0RJUn0vR0lULVRBRyIpCisgICAgaWYgKEVYSVNUUyAiJHtDTUFLRV9TT1VSQ0VfRElSfS9HSVQtQ09NTUlUIiBBTkQgRVhJU1RTICIke0NNQUtFX1NPVVJDRV9ESVJ9L0dJVC1UQUciKQogICAgICAgICBmaWxlKFJFQUQgIiR7Q01BS0VfU09VUkNFX0RJUn0vR0lULVRBRyIgR0lUX1RBRykKICAgICAgICAgc3RyaW5nKFNUUklQICR7R0lUX1RBR30gR0lUX1RBRykKICAgICBlbmRpZigpCg==" | base64 -d - > 0001_patch.txt
+          patch CMakeModules/GenerateBuildInfo.cmake 0001_patch.txt
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: CLANGARM64
+          update: true
+          pacboy: >-
+            cmake:p
+            ninja:p
+            qt6:p
+            spirv-tools:p
+            toolchain:p
+      - name: Build
+        run: |
+          cd release/azahar
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_QT_TRANSLATION=ON -DUSE_DISCORD_PRESENCE=ON
+          cmake --build build
+          cmake --build build -- bundle
+      - name: Copy files
+        shell: bash
+        run: |
+          cd release/azahar
+          cp license.txt build/bundle/license.txt
+          install -Dv /dev/null build/bundle/user/user.txt
+      - name: Upload as artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: azahar-git-windows-arm64-msys2-${{github.sha}}
+          path: release/azahar/build/bundle
+          if-no-files-found: error
+          retention-days: 1
